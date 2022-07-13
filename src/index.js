@@ -1,67 +1,63 @@
-// module.exports = function check(str, bracketsConfig) {
-//   let openBrackets = [];
-//   let bracketPairs = {};
-
-//   for(let i = 0; i < bracketsConfig.length; i++) {
-//     openBrackets.push(bracketsConfig[i][0]);
-
-//       let key = bracketsConfig[i][1];
-//       bracketPairs[key] = bracketsConfig[i][0];
-//   }
-
-//   console.log(openBrackets);
-//   console.log(bracketPairs);
-
-//   let stack = [];
-
-//   for(let i = 0; i < str.length; i++) {
-//       let currentSymbol = str[i];
-
-//       if(openBrackets.includes(currentSymbol)) {
-//           stack.push(currentSymbol);
-//       } else {
-//           if(stack.length == 0) {
-//               return false;
-//           }
-
-//           let topElement = stack[stack.length - 1];
-
-//           if(bracketPairs[currentSymbol] === topElement) {
-//               stack.pop();
-//           } else {
-//               return false;
-//           }
-//       }
-//   }
-
-//   return stack.length === 0;
-// }
-
 module.exports = function check(str, bracketsConfig) {
-   
-    let brackets = bracketsConfig.join('').replace(/,/g, ''); // join: '(,)|,|'
-    console.log(brackets);
-    console.log(str);
+
+    let config = bracketsConfig.join('').replace(/,/g, ''); // String: ()[]{}
     let stack = [];
 
     for (let bracket of str) {
-        let bracketsIndex = brackets.indexOf(bracket);
+        let index = config.indexOf(bracket); // Str: []][[] >>> Config: ()[]{} >>> Br: []] >>> Index: 2 3 3
 
-        if (bracketsIndex % 2 === 0) { 
-            if (bracket === brackets[bracketsIndex + 1] && stack[stack.length - 1] === bracketsIndex) {
+        // OPENING
+        if (index % 2 === 0) { 
+            let last = stack.length - 1;
+
+            if (bracket === config[index + 1] && stack[last] === index) { // If opening = closing (Ex: ||)
                 stack.pop();
-            } else if (bracket === brackets[bracketsIndex + 1] && stack[stack.length - 1] !== bracketsIndex) {
-                stack.push(bracketsIndex)
             } else {
-                stack.push(bracketsIndex)
+                stack.push(index); 
             }
-        } else {
-            if (stack.pop() !== bracketsIndex - 1) {
-                  return false;
+        // CLOSING
+        } else { 
+            let lastInStack = stack.pop();
+            if (lastInStack !== index - 1) {
+                return false;
             }
-        }
-          
+        }    
     }
-
     return stack.length === 0;
 }
+
+// module.exports = function check(str, bracketsConfig) {
+//     let stack = [];
+//     let brackets = {};
+
+//     for(let i = 0; i < bracketsConfig.length; i++) {
+//         let key = bracketsConfig[i][1];
+//         let value = bracketsConfig[i][0];
+//         brackets[key] = value;
+//     }
+
+//     let closingBrackets = [];
+//     for(let key in brackets) {
+//         closingBrackets.push(key);
+//     }
+
+//     console.log(brackets);
+//     console.log(str);
+
+//     function isClosingBracket(br) {
+//         return closingBrackets.includes(br);
+//     }
+
+//     for(let i = 0; i < str.length; i++) {
+//         let current = str[i];
+
+//         if(!isClosingBracket(current)) { 
+//             stack.push(current); 
+//         } else { 
+//             if(brackets[current] === stack[stack.length - 1]) stack.pop();
+//             else return false;
+//         }
+//     }
+
+//     return stack.length === 0;
+// }
